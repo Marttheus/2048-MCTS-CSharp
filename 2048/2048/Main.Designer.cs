@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace _2048
 {
@@ -35,13 +36,73 @@ namespace _2048
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(396, 540);
-            this.Text = "2048";
+            this.Text = "2048 - MCTS";
             this.Name = "2048";
 
             this._timer = new System.Windows.Forms.Timer(this.components);
             this._timer.Enabled = true;
             this._timer.Interval = 60;
             this._timer.Tick += new System.EventHandler(this.timer_Tick);
+
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Main_MouseClick);
+
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Main_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Main_KeyUp);
+        }
+
+        private void Main_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (_game.keyTop && (e.KeyCode == Keys.W || e.KeyCode == Keys.Up))
+            {
+                _game.keyTop = false;
+            }
+
+            if (_game.keyLeft && (e.KeyCode == Keys.A || e.KeyCode == Keys.Left))
+            {
+                _game.keyLeft = false;
+            }
+
+            if (_game.keyBottom && (e.KeyCode == Keys.S || e.KeyCode == Keys.Down))
+            {
+                _game.keyBottom = false;
+            }
+
+            if (_game.keyRight && (e.KeyCode == Keys.D || e.KeyCode == Keys.Right))
+            {
+                _game.keyRight = false;
+            }
+        }
+
+        private void Main_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!_game.keyLeft && !_game.keyRight && !_game.keyBottom && (e.KeyCode == Keys.W || e.KeyCode == Keys.Up))
+            {
+                _game.keyTop = true;
+                _game.MoveBoard(Game.Direction.Top);
+            }
+
+            if (!_game.keyTop && !_game.keyRight && !_game.keyBottom && (e.KeyCode == Keys.A || e.KeyCode == Keys.Left))
+            {
+                _game.keyLeft = true;
+                _game.MoveBoard(Game.Direction.Left);
+            }
+
+            if (!_game.keyTop && !_game.keyRight && !_game.keyLeft && (e.KeyCode == Keys.S || e.KeyCode == Keys.Down))
+            {
+                _game.keyBottom = true;
+                _game.MoveBoard(Game.Direction.Bottom);
+            }
+
+            if (!_game.keyTop && !_game.keyLeft && !_game.keyBottom && (e.KeyCode == Keys.D || e.KeyCode == Keys.Right))
+            {
+                _game.keyRight = true;
+                _game.MoveBoard(Game.Direction.Right);
+            }
+        }
+
+        private void Main_MouseClick(object sender, MouseEventArgs e)
+        {
+            _game.CheckButton(e.X, e.Y);
         }
 
         private void timer_Tick(object sender, EventArgs e)

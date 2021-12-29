@@ -8,7 +8,9 @@ namespace _2048
     {
         private int _score = 0, _best = 0;
         private int _addNum = 2;
+
         public bool Render = true;
+        public bool keyTop, keyBottom, keyLeft, keyRight;
 
         private bool _gameOver;
         private int[][] _board;
@@ -23,6 +25,14 @@ namespace _2048
         private Font _font10 = new Font("Clear Sans", 10, FontStyle.Bold);
         private Font _font12 = new Font("Clear Sans", 12, FontStyle.Bold);
         private Font _font22 = new Font("Clear Sans", 22, FontStyle.Bold);
+
+        public enum Direction
+        {
+            Top,
+            Left,
+            Bottom,
+            Right
+        }
 
         public Game()
         {
@@ -53,9 +63,10 @@ namespace _2048
             _bitmaps.Add(new Bitmap(@"images/17.png"));
             _bitmaps.Add(new Bitmap(@"images/18.png"));
 
-            _buttons.Add(new Button(18, 18, 100, 66, 1, false)); // score
-            _buttons.Add(new Button(136, 18, 100, 66, 1, false)); // best
-            _buttons.Add(new Button(18, 96, 100, 38, 2, true));  // new game
+            _buttons.Add(new Button(88, 18, 100, 66, 1, false)); // score
+            _buttons.Add(new Button(206, 18, 100, 66, 1, false)); // best
+            _buttons.Add(new Button(88, 96, 150, 38, 2, true));  // new game
+            _buttons.Add(new Button(206, 96, 150, 38, 2, true));  // enable ia
 
             _rect = new Rectangle(0, 0, 416, 640);
         }
@@ -74,6 +85,227 @@ namespace _2048
                     _addNum--;
                 }
             }
+        }
+
+        public void MoveBoard(Direction direction)
+        {
+            bool add = false;
+
+            switch (direction)
+            {
+                case Direction.Top:
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            for (int k = j + 1; k < 4; k++)
+                            {
+                                if (_board[i][k] == 0)
+                                {
+                                    continue;
+                                }
+                                else if (_board[i][k] == _board[i][j])
+                                {
+                                    _board[i][j] *= 2;
+                                    _score += _board[i][j];
+                                    _board[i][k] = 0;
+                                    add = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    if (_board[i][j] == 0 && _board[i][k] != 0)
+                                    {
+                                        _board[i][j] = _board[i][k];
+                                        _board[i][k] = 0;
+                                        j--;
+                                        add = true;
+                                        break;
+                                    }
+                                    else if (_board[i][j] != 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case Direction.Right:
+                    for (int j = 0; j < 4; j++)
+                    {
+                        for (int i = 3; i >= 0; i--)
+                        {
+                            for (int k = i - 1; k >= 0; k--)
+                            {
+                                if (_board[k][j] == 0)
+                                {
+                                    continue;
+                                }
+                                else if (_board[k][j] == _board[i][j])
+                                {
+                                    _board[i][j] *= 2;
+                                    _score += _board[i][j];
+                                    _board[k][j] = 0;
+                                    add = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    if (_board[i][j] == 0 && _board[k][j] != 0)
+                                    {
+                                        _board[i][j] = _board[k][j];
+                                        _board[k][j] = 0;
+                                        i++;
+                                        add = true;
+                                        break;
+                                    }
+                                    else if (_board[i][j] != 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case Direction.Bottom:
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int j = 3; j >= 0; j--)
+                        {
+                            for (int k = j - 1; k >= 0; k--)
+                            {
+                                if (_board[i][k] == 0)
+                                {
+                                    continue;
+                                }
+                                else if (_board[i][k] == _board[i][j])
+                                {
+                                    _board[i][j] *= 2;
+                                    _score += _board[i][j];
+                                    _board[i][k] = 0;
+                                    add = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    if (_board[i][j] == 0 && _board[i][k] != 0)
+                                    {
+                                        _board[i][j] = _board[i][k];
+                                        _board[i][k] = 0;
+                                        j++;
+                                        add = true;
+                                        break;
+                                    }
+                                    else if (_board[i][j] != 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case Direction.Left:
+                    for (int j = 0; j < 4; j++)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            for (int k = i + 1; k < 4; k++)
+                            {
+                                if (_board[k][j] == 0)
+                                {
+                                    continue;
+                                }
+                                else if (_board[k][j] == _board[i][j])
+                                {
+                                    _board[i][j] *= 2;
+                                    _score += _board[i][j];
+                                    _board[k][j] = 0;
+                                    add = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    if (_board[i][j] == 0 && _board[k][j] != 0)
+                                    {
+                                        _board[i][j] = _board[k][j];
+                                        _board[k][j] = 0;
+                                        i--;
+                                        add = true;
+                                        break;
+                                    }
+                                    else if (_board[i][j] != 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if(_score > _best)
+                _best = _score;
+
+            if (add)
+                _addNum++;
+
+            CheckGameOver();
+
+            Render = true;
+        }
+
+        private void CheckGameOver()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (i - 1 >= 0)
+                    {
+                        if (_board[i - 1][j] == _board[i][j])
+                        {
+                            return;
+                        }
+                    }
+
+                    if (i + 1 < 4)
+                    {
+                        if (_board[i + 1][j] == _board[i][j])
+                        {
+                            return;
+                        }
+                    }
+
+                    if (j - 1 >= 0)
+                    {
+                        if (_board[i][j - 1] == _board[i][j])
+                        {
+                            return;
+                        }
+                    }
+
+                    if (j + 1 < 4)
+                    {
+                        if (_board[i][j + 1] == _board[i][j])
+                        {
+                            return;
+                        }
+                    }
+
+                    if (_board[i][j] == 0)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            _gameOver = true;
         }
 
         public void Draw(Graphics graphics)
@@ -95,13 +327,14 @@ namespace _2048
                 _buttons[i].Draw(graphics, _bitmaps[_buttons[i].GetImgID()]);
             }
 
-            DrawTextCenterXWS(graphics, "SCORE", _font10, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.FromArgb(235, 221, 208)), 68, 32);
-            DrawTextCenterXWS(graphics, _score.ToString(), _font12, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.White), 68, 54);
+            DrawTextCenterXWS(graphics, "SCORE", _font10, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.FromArgb(235, 221, 208)), 138, 32);
+            DrawTextCenterXWS(graphics, _score.ToString(), _font12, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.White), 138, 54);
 
-            DrawTextCenterXWS(graphics, "BEST", _font10, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.FromArgb(235, 221, 208)), 186, 32);
-            DrawTextCenterXWS(graphics, _best.ToString(), _font12, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.White), 186, 54);
+            DrawTextCenterXWS(graphics, "BEST", _font10, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.FromArgb(235, 221, 208)), 256, 32);
+            DrawTextCenterXWS(graphics, _best.ToString(), _font12, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.White), 256, 54);
 
-            DrawTextCenterWS(graphics, "NEW GAME", _font10, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.FromArgb(255, 241, 224)), 68, 115);
+            DrawTextCenterWS(graphics, "NEW GAME", _font10, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.FromArgb(255, 241, 224)), 138, 115);
+            DrawTextCenterWS(graphics, "ENABLE IA", _font10, new SolidBrush(Color.FromArgb(64, 10, 10, 10)), new SolidBrush(Color.FromArgb(255, 241, 224)), 256, 115);
 
             graphics.DrawImage(_bitmaps[3], new Point(18, 166));
 
@@ -182,6 +415,59 @@ namespace _2048
             }
 
             return 4;
+        }
+
+        public void CheckButton(int x, int y)
+        {
+            for (int i = 0; i < _buttons.Count; i++)
+            {
+                var button = _buttons[i];
+
+                if (button.GetClickable())
+                {
+                    if(x >= button.GetPositionX() && x <= button.GetPositionX() + button.GetWidth() && y >= button.GetPositionY() && y <= button.GetPositionY() + button.GetHeight())
+                    {
+                        ActionButton(i);
+                    }
+                }
+            }
+        }
+
+        private void ActionButton(int buttonID)
+        {
+            switch (buttonID)
+            {
+                case 2: // new game
+                    NewGame();
+                    break;
+                case 3: // enable ia
+                    EnableIA();
+                    break;
+                default:
+                    throw new ArgumentException();
+                    break;
+            }
+        }
+
+        private void NewGame()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    this._board[i][j] = 0;
+                }
+            }
+
+            this._addNum = 2;
+            this._score = 0;
+            this._gameOver = false;
+            this.Render = true;
+        }
+
+        private void EnableIA()
+        {
+            throw new NotImplementedException();
         }
     }
 }
